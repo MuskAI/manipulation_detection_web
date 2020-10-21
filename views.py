@@ -1,11 +1,12 @@
 from django.http import HttpResponse
 from django.shortcuts import render
-import os,sys
+import os, sys
 from django.http import JsonResponse
 from tensorflow_model.testAPI import testEnterFunction
 destination_path = '/home/liu/chenhaoran/manipulation_detection_web/upload_dir/input'
 detection_save_path = '/home/liu/chenhaoran/manipulation_detection_web/upload_dir/output'
 from get_score import GetScore
+import json
 """
 global variable
 """
@@ -30,13 +31,14 @@ def upload_file(request):
         detection_flag = detection(input_img_path,output_dir)
         # using output_dir to generate prediction score
 
-
         print('the output:', output_dir)
         if detection_flag:
             score = GetScore(output_dir).basic_description()
             score = str(round(score,4))
-            res = {'score', score, 'input_img_name', myFile.name,'pred_img_name',myFile.name.replace('.jpg', '.png') }
-            return JsonResponse(res,json_dumps_params={'ensure_ascii': False})
+            print('the score is :', score)
+            res = {'score': score, 'input_img_name': myFile.name,'pred_img_name': myFile.name.replace('.jpg', '.png') }
+            return JsonResponse(res, json_dumps_params={'ensure_ascii': False})
+            # return HttpResponse(json.dumps(res))
         else:
             return HttpResponse("error")
 
